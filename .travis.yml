@@ -1,33 +1,46 @@
 matrix:
   include:
-    - language: node_js
-      node_js: '12'
-      cache:
-        - yarn: true
-      before_install:
-        - cd frontend
-      install:
-        - yarn install
-      script:
-        - ./node_modules/.bin/eslint src/
-        - yarn test --coverage --watchAll=false
-    - language: python
-      python: 3.7
-      addons: 
+  - language: node_js
+    node_js: '12'
+    addons:
         sonarcloud:
-          organization: "swsnu"
-          token:
-            secure: "sR7Ko8b1/XTRxMB7TN6E887uoAkvN2naz0IGl32N5lmetcuSq6QhD/TmqBDNF0/CGtO4TabQsw7LVo6jMyFEX/4P6GJBs4vNtk89tGBQJxR5lfJTOZOHJESzrsLEPNQ8X6ZptiDzk8Uvmu7BrxxIGDTLG11jfjY0swpvqcuTc+8mIZSIlD8RyMZ0og4aE7r8skWGcp+U7i3JGQNvfyxG1kXfW/qlRgjPm1Bv2P8UCYIe0CY/+ng8XAUJ47E7+Y7FQQuCiXnl27I8BCPtY7y+DFeYbBANiCyZ9sCIbJ2lYj7FEcczuB4IeGl6lnTkrMrRn+gfNgo47yie7Xkv/32GUo+7U8BoNJco4htpp/k9Z6rMSLyYX5pCUx30D/UPGtWOgauqXnCQCOsLshCw2pK67GFjcPa+urIboLBpdvJWbiJvTD5t97Llz1Omhii6zg9goN7n5m0Xp3m9x+w/WcWvx6ZIWwminwbgYbkl+H6WQIBIvHh1jWlVs8Ai+BOHV60F5RzxVj9R2W6smN8lRZFsJ25Nxlp4kwOR0B86LTrNbfbbzvCs4vELOr7Ayv6H7p42LNeGfaHILkHFF/mrN4iKxwNlnBKtGbJIk5QB8QkLBLnU2IT/o5VbmYv41jqQAZXIk8JyBl122JNBrz32p3wdv5CZkVizwQmnEVdZo/CHcT0="
-      python: '3.7'
-      cache:
-        - pip: true
-      before_install:
-        - cd backend
-      install:
-        - pip install -r requirements.txt
-      script:
-        - pylint **/*.py --load-plugins pylint_django
-        - coverage run --source='.' manage.py test
-        - coverage xml
-        - cd ..
-        - sonar-scanner
+            organization: 'swsnu'
+            token:
+                secure: "sR7Ko8b1/XTRxMB7TN6E887uoAkvN2naz0IGl32N5lmetcuSq6QhD/TmqBDNF0/CGtO4TabQsw7LVo6jMyFEX/4P6GJBs4vNtk89tGBQJxR5lfJTOZOHJESzrsLEPNQ8X6ZptiDzk8Uvmu7BrxxIGDTLG11jfjY0swpvqcuTc+8mIZSIlD8RyMZ0og4aE7r8skWGcp+U7i3JGQNvfyxG1kXfW/qlRgjPm1Bv2P8UCYIe0CY/+ng8XAUJ47E7+Y7FQQuCiXnl27I8BCPtY7y+DFeYbBANiCyZ9sCIbJ2lYj7FEcczuB4IeGl6lnTkrMrRn+gfNgo47yie7Xkv/32GUo+7U8BoNJco4htpp/k9Z6rMSLyYX5pCUx30D/UPGtWOgauqXnCQCOsLshCw2pK67GFjcPa+urIboLBpdvJWbiJvTD5t97Llz1Omhii6zg9goN7n5m0Xp3m9x+w/WcWvx6ZIWwminwbgYbkl+H6WQIBIvHh1jWlVs8Ai+BOHV60F5RzxVj9R2W6smN8lRZFsJ25Nxlp4kwOR0B86LTrNbfbbzvCs4vELOr7Ayv6H7p42LNeGfaHILkHFF/mrN4iKxwNlnBKtGbJIk5QB8QkLBLnU2IT/o5VbmYv41jqQAZXIk8JyBl122JNBrz32p3wdv5CZkVizwQmnEVdZo/CHcT0="
+    cache:
+    - yarn: true
+    before_install:
+    - cd frontend
+    install:
+    - yarn install
+    - yarn add coveralls
+    script:
+    - ./node_modules/.bin/eslint src/
+    - yarn test --coverage --watchAll=false
+    - sonar-scanner
+    after_success:
+    - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - language: python
+    python: '3.7'
+    addons: 
+      sonarcloud:
+        organization: 'swsnu'
+        token:
+          secure: "sR7Ko8b1/XTRxMB7TN6E887uoAkvN2naz0IGl32N5lmetcuSq6QhD/TmqBDNF0/CGtO4TabQsw7LVo6jMyFEX/4P6GJBs4vNtk89tGBQJxR5lfJTOZOHJESzrsLEPNQ8X6ZptiDzk8Uvmu7BrxxIGDTLG11jfjY0swpvqcuTc+8mIZSIlD8RyMZ0og4aE7r8skWGcp+U7i3JGQNvfyxG1kXfW/qlRgjPm1Bv2P8UCYIe0CY/+ng8XAUJ47E7+Y7FQQuCiXnl27I8BCPtY7y+DFeYbBANiCyZ9sCIbJ2lYj7FEcczuB4IeGl6lnTkrMrRn+gfNgo47yie7Xkv/32GUo+7U8BoNJco4htpp/k9Z6rMSLyYX5pCUx30D/UPGtWOgauqXnCQCOsLshCw2pK67GFjcPa+urIboLBpdvJWbiJvTD5t97Llz1Omhii6zg9goN7n5m0Xp3m9x+w/WcWvx6ZIWwminwbgYbkl+H6WQIBIvHh1jWlVs8Ai+BOHV60F5RzxVj9R2W6smN8lRZFsJ25Nxlp4kwOR0B86LTrNbfbbzvCs4vELOr7Ayv6H7p42LNeGfaHILkHFF/mrN4iKxwNlnBKtGbJIk5QB8QkLBLnU2IT/o5VbmYv41jqQAZXIk8JyBl122JNBrz32p3wdv5CZkVizwQmnEVdZo/CHcT0="
+    cache:
+    - pip: true
+    before_install:
+    - cd backend
+    install:
+    - pip install -r requirements.txt
+    before_script:
+    - cd backend
+    - python3 manage.py migrate
+    script:
+    - pylint **/*.py --load-plugins pylint_django
+    - coverage run --source='.' manage.py test
+    - coverage xml
+    - cd ..
+    - sonar-scanner
+    after_success:
+    - coveralls
